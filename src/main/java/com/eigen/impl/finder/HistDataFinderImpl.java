@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.eigen.iface.finder.DbDataFinder;
@@ -33,6 +34,7 @@ public class HistDataFinderImpl implements HistDataFinder {
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
+	@Cacheable("hist_data")
 	public String getData(String sSymbol, String sFrDate, String sToDate) {
     	Date dtFrom;
     	Date dtTo;
@@ -87,7 +89,7 @@ public class HistDataFinderImpl implements HistDataFinder {
 		if (!ls.isEmpty()) {
 			sb.append("Date,Open,High,Low,Close,Volume,Adj Close");
 			for (MHistData d: ls) {
-				sb.append("\n" + dateFormat.format(d.getDate().getTime()) +
+				sb.append("\n" + dateFormat.format(d.getTimestamp().getTime()) +
 						"," + d.getOpen() +
 						"," + d.getHigh() +
 						"," + d.getLow() +

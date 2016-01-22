@@ -21,8 +21,8 @@ public class MHistData {
 	@Column(name="symbol")
 	private String symbol = "";
     
-	@Column(name="date")
-    private Calendar date = Calendar.getInstance();
+	@Column(name="timestamp")
+    private Calendar timestamp = Calendar.getInstance();
  
 	@Column(name="open")
     private BigDecimal open = BigDecimal.ZERO;
@@ -38,6 +38,9 @@ public class MHistData {
     
 	@Column(name="adj_close")
     private BigDecimal adjClose = BigDecimal.ZERO;
+    
+	@Column(name="nav")
+    private BigDecimal nav = BigDecimal.ZERO;
     
 	@Column(name="volume")
     private long volume = 0;
@@ -61,12 +64,12 @@ public class MHistData {
 		this.symbol = symbol;
 	}
 
-	public Calendar getDate() {
-		return date;
+	public Calendar getTimestamp() {
+		return timestamp;
 	}
 
-	public void setDate(Calendar date) {
-		this.date = date;
+	public void setTimestamp(Calendar timestamp) {
+		this.timestamp = timestamp;
 	}
 
 	public BigDecimal getOpen() {
@@ -107,6 +110,14 @@ public class MHistData {
 
 	public void setAdjClose(BigDecimal adjClose) {
 		this.adjClose = adjClose;
+	}
+
+	public BigDecimal getNav() {
+		return nav;
+	}
+
+	public void setNav(BigDecimal nav) {
+		this.nav = nav;
 	}
 
 	public long getVolume() {

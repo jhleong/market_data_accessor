@@ -91,7 +91,7 @@ public class YahooDataFinderImpl implements YahooDataFinder {
 		} catch (ParseException e) {
 			logger.log(Level.SEVERE, e.getMessage());
 		}
-		o.setDate(c);
+		o.setTimestamp(c);
 		//
 		o.setOpen(new BigDecimal((String) data[1]));
 		o.setHigh(new BigDecimal((String) data[2]));

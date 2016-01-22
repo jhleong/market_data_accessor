@@ -50,9 +50,9 @@ public class HistDataDaoImpl implements HistDataDao {
 		String hql = "from MHistData d"
 				+ " where"
 				+ " (d.symbol = :symbol)"
-				+ " and (date(d.date) >= date(:frdate))"
-				+ " and (date(d.date) <= date(:todate))"
-				+ " order by d.symbol, d.date desc";
+				+ " and (date(d.timestamp) >= date(:frdate))"
+				+ " and (date(d.timestamp) <= date(:todate))"
+				+ " order by d.symbol, d.timestamp desc";
 		String[] names = {"symbol", "frdate", "todate"};
 		Object[] values = {sSymbol, dtFrom, dtTo};
 		@SuppressWarnings("unchecked")
