@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.eigen.iface.finder.YahooDataFinder;
 import com.eigen.model.MHistData;
+import com.eigen.model.MProfile;
 import com.eigen.util.HttpUtil;
 
 @Service
@@ -34,7 +35,24 @@ public class YahooDataFinderImpl implements YahooDataFinder {
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
-	public List<MHistData> getHistData(String sSymbol, Date dtFrom, Date dtTo) {
+	public MProfile getProfile(String sRicName) {
+		// TODO: get from Yahoo
+		MProfile mProfile = new MProfile();
+		mProfile.setRic_name(sRicName.toUpperCase());
+		return mProfile;
+	}
+
+	@Override
+	public List<MHistData> getHistData(MProfile mProfile) {
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.YEAR, -20);	// Data from 20 years ago
+		Date dtLiveFrom = c.getTime();
+		Date dtLiveTo = new Date();
+    	return getHistData(mProfile, dtLiveFrom, dtLiveTo);
+	}
+
+	@Override
+	public List<MHistData> getHistData(MProfile mProfile, Date dtFrom, Date dtTo) {
 		List<MHistData> ls = new ArrayList<MHistData>();
 		
     	Calendar from = Calendar.getInstance();
@@ -44,7 +62,7 @@ public class YahooDataFinderImpl implements YahooDataFinder {
     	to.setTime(dtTo);
     	
         Map<String, String> params = new LinkedHashMap<String, String>();
-        params.put("s", sSymbol);
+        params.put("s", mProfile.getRic_name());
 
         params.put("a", String.valueOf(from.get(Calendar.MONTH)));
         params.put("b", String.valueOf(from.get(Calendar.DAY_OF_MONTH)));
@@ -68,7 +86,7 @@ public class YahooDataFinderImpl implements YahooDataFinder {
 	        br.readLine(); // skip the first line
 	        for (String line = br.readLine(); line != null; line = br.readLine()) {
 	        	MHistData o = parseCsvLine(line);
-	        	o.setSymbol(sSymbol);
+	        	o.setProfile_id(mProfile.getId());
 	        	ls.add(o);
 	        }
 	        br.close();
@@ -91,7 +109,7 @@ public class YahooDataFinderImpl implements YahooDataFinder {
 		} catch (ParseException e) {
 			logger.log(Level.SEVERE, e.getMessage());
 		}
-		o.setTimestamp(c);
+		o.setDt(c);
 		//
 		o.setOpen(new BigDecimal((String) data[1]));
 		o.setHigh(new BigDecimal((String) data[2]));

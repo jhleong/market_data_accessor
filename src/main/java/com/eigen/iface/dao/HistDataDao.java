@@ -9,9 +9,9 @@ public interface HistDataDao {
 
 	public void doSave(MHistData o);
 
-	public void doDelete_bySymbol(String sSymbol);
+	public void doDelete_byProfileId(long nProfile_id);
 
-	public List<MHistData> getHistData_all_bySymbol(String sSymbol);
-	public List<MHistData> getHistData(String sSymbol, Date dtFrom, Date dtTo);
+	public List<MHistData> getHistData_all_byProfileId(long nProfile_id);
+	public List<MHistData> getHistData_byProfileId_byDate(long nProfile_id, Date dtFrom, Date dtTo);
 
 }

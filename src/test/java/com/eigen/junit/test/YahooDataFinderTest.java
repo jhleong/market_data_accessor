@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.eigen.iface.finder.YahooDataFinder;
 import com.eigen.junit.config.TestConfig;
 import com.eigen.model.MHistData;
+import com.eigen.model.MProfile;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -27,10 +28,12 @@ public class YahooDataFinderTest {
 	
 	@Test
 	public void test_get_hist_data() {
+		MProfile rtProfile = new MProfile();
+		rtProfile.setRic_name("GOOG");
 		List<MHistData> ls = null;
 		try {
 			ls = yahooDataFinder.getHistData(
-					"GOOG",
+					rtProfile,
 					dateFormat.parse("2015-01-01"),
 					dateFormat.parse("2015-12-31"));
 		} catch (ParseException e) {

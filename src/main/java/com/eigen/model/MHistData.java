@@ -10,19 +10,19 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="hist_data")
+@Table(name = "hist_data")
 public class MHistData {
 
 	@Id
 	@GeneratedValue
 	@Column(name="id")
 	private long id = -1;
-
-	@Column(name="symbol")
-	private String symbol = "";
+	
+	@Column(name="profile_id")
+	private long profile_id = -1;
     
-	@Column(name="timestamp")
-    private Calendar timestamp = Calendar.getInstance();
+	@Column(name="dt")
+    private Calendar dt = Calendar.getInstance();
  
 	@Column(name="open")
     private BigDecimal open = BigDecimal.ZERO;
@@ -44,9 +44,6 @@ public class MHistData {
     
 	@Column(name="volume")
     private long volume = 0;
-    
-	@Column(name="last_update_dt")
-    private Calendar lastUpdateDt = Calendar.getInstance();
 
 	public long getId() {
 		return id;
@@ -56,20 +53,20 @@ public class MHistData {
 		this.id = id;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public long getProfile_id() {
+		return profile_id;
 	}
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+	public void setProfile_id(long profile_id) {
+		this.profile_id = profile_id;
 	}
 
-	public Calendar getTimestamp() {
-		return timestamp;
+	public Calendar getDt() {
+		return dt;
 	}
 
-	public void setTimestamp(Calendar timestamp) {
-		this.timestamp = timestamp;
+	public void setDt(Calendar dt) {
+		this.dt = dt;
 	}
 
 	public BigDecimal getOpen() {
@@ -126,14 +123,6 @@ public class MHistData {
 
 	public void setVolume(long volume) {
 		this.volume = volume;
-	}
-
-	public Calendar getLastUpdateDt() {
-		return lastUpdateDt;
-	}
-
-	public void setLastUpdateDt(Calendar lastUpdateDt) {
-		this.lastUpdateDt = lastUpdateDt;
 	}
 	
 }

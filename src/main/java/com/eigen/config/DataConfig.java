@@ -28,7 +28,7 @@ public class DataConfig {
 	public DataSource getDataSource() {
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5432/eigencat");
+		dataSource.setUrl("jdbc:postgresql://localhost:5432/qidb");
 		dataSource.setUsername("postgres");
 		dataSource.setPassword("postgres");
 

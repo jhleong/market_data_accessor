@@ -26,19 +26,19 @@ public class HistDataDaoImpl implements HistDataDao {
 
 	@Override
 	@Transactional
-	public void doDelete_bySymbol(String sSymbol) {
-		List<MHistData> ls = getHistData_all_bySymbol(sSymbol);
+	public void doDelete_byProfileId(long nProfile_id) {
+		List<MHistData> ls = getHistData_all_byProfileId(nProfile_id);
 		hibernateTemplate.deleteAll(ls);
 	}
 
 	@Override
 	@Transactional
-	public List<MHistData> getHistData_all_bySymbol(String sSymbol) {
+	public List<MHistData> getHistData_all_byProfileId(long nProfile_id) {
 		String hql = "from MHistData d"
 				+ " where"
-				+ " (d.symbol = :symbol)";
-		String[] names = {"symbol"};
-		Object[] values = {sSymbol};
+				+ " (d.profile_id = :profile_id)";
+		String[] names = {"profile_id"};
+		Object[] values = {nProfile_id};
 		@SuppressWarnings("unchecked")
 		List<MHistData> ls = (List<MHistData>) hibernateTemplate.findByNamedParam(hql, names, values);
 		return ls;
@@ -46,15 +46,15 @@ public class HistDataDaoImpl implements HistDataDao {
 
 	@Override
 	@Transactional
-	public List<MHistData> getHistData(String sSymbol, Date dtFrom, Date dtTo) {
+	public List<MHistData> getHistData_byProfileId_byDate(long nProfile_id, Date dtFrom, Date dtTo) {
 		String hql = "from MHistData d"
 				+ " where"
-				+ " (d.symbol = :symbol)"
-				+ " and (date(d.timestamp) >= date(:frdate))"
-				+ " and (date(d.timestamp) <= date(:todate))"
-				+ " order by d.symbol, d.timestamp desc";
-		String[] names = {"symbol", "frdate", "todate"};
-		Object[] values = {sSymbol, dtFrom, dtTo};
+				+ " (d.profile_id = :profile_id)"
+				+ " and (date(d.dt) >= date(:frdate))"
+				+ " and (date(d.dt) <= date(:todate))"
+				+ " order by d.dt desc";
+		String[] names = {"profile_id", "frdate", "todate"};
+		Object[] values = {nProfile_id, dtFrom, dtTo};
 		@SuppressWarnings("unchecked")
 		List<MHistData> ls = (List<MHistData>) hibernateTemplate.findByNamedParam(hql, names, values);
 		return ls;

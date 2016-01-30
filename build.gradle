@@ -58,7 +58,7 @@ dependencies {
     compile 'org.hibernate:hibernate-core:4.3.11.Final'
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'org.postgresql:postgresql:9.4-1206-jdbc42'
-    compile 'org.apache.ignite:ignite-hibernate:RELEASE'
+    compile 'org.apache.ignite:ignite-hibernate:1.0.0'
     
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 

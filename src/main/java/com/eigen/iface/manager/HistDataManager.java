@@ -9,6 +9,6 @@ public interface HistDataManager {
 	public void doSave(MHistData o);
 	public void doSave(List<MHistData> ls);
 	
-	public void doDelete_bySymbol(String sSymbol);
+	public void doDelete_byProfileId(long nProfile_id);
 
 }

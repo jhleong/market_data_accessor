@@ -22,18 +22,14 @@ public class HistDataManagerImpl implements HistDataManager {
 
 	@Override
 	public void doSave(List<MHistData> ls) {
-		if (ls.isEmpty()) return;
-		//
-		doDelete_bySymbol(ls.get(0).getSymbol());
-		//
 		for (MHistData o: ls) {
 			histDataDao.doSave(o);
 		}
 	}
 
 	@Override
-	public void doDelete_bySymbol(String sSymbol) {
-		histDataDao.doDelete_bySymbol(sSymbol);
+	public void doDelete_byProfileId(long nProfile_id) {
+		histDataDao.doDelete_byProfileId(nProfile_id);
 	}
 
 }
