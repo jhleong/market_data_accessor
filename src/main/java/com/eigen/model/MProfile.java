@@ -6,26 +6,28 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "profile", uniqueConstraints = @UniqueConstraint(columnNames = "ric_name"))
+@Table(name = "profile", uniqueConstraints = @UniqueConstraint(columnNames = "symbol"))
 public class MProfile {
 	
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(name="profile_id_gen", allocationSize=1, sequenceName="profile_id_seq")
+	@GeneratedValue(generator = "profile_id_gen")
 	@Column(name="id")
 	private long id = -1;
 
-	@Column(name="ric_name")
-	private String ric_name = "";
+	@Column(name="symbol")
+	private String symbol = "";
 
 	@Column(name="long_name")
 	private String long_name = "";
 
 	@Column(name="rec_type")
-	private String rec_type = "";
+	private Integer rec_type = 0;
 
 	@Column(name="bond_type")
 	private Integer bond_type = 0;
@@ -46,7 +48,7 @@ public class MProfile {
 	private Integer language_id = 0;
 
 	@Column(name="language_name")
-	private Integer language_name = 0;
+	private String language_name = "";
 
 	@Column(name="market_sector")
 	private Integer market_sector = 0;
@@ -62,6 +64,12 @@ public class MProfile {
     
 	@Column(name="last_update_ts")
     private Calendar lastUpdateTs = Calendar.getInstance();
+	
+	@Column(name="data_provider")
+	private Integer data_provider = 0;
+	
+	@Column(name="hit_perday")
+	private Integer hit_perday = 0;
 
 	public long getId() {
 		return id;
@@ -71,12 +79,12 @@ public class MProfile {
 		this.id = id;
 	}
 
-	public String getRic_name() {
-		return ric_name;
+	public String getSymbol() {
+		return symbol;
 	}
 
-	public void setRic_name(String ric_name) {
-		this.ric_name = ric_name;
+	public void setSymbol(String symbol) {
+		this.symbol = symbol;
 	}
 
 	public String getLong_name() {
@@ -87,11 +95,11 @@ public class MProfile {
 		this.long_name = long_name;
 	}
 
-	public String getRec_type() {
+	public Integer getRec_type() {
 		return rec_type;
 	}
 
-	public void setRec_type(String rec_type) {
+	public void setRec_type(Integer rec_type) {
 		this.rec_type = rec_type;
 	}
 
@@ -143,11 +151,11 @@ public class MProfile {
 		this.language_id = language_id;
 	}
 
-	public Integer getLanguage_name() {
+	public String getLanguage_name() {
 		return language_name;
 	}
 
-	public void setLanguage_name(Integer language_name) {
+	public void setLanguage_name(String language_name) {
 		this.language_name = language_name;
 	}
 
@@ -189,6 +197,22 @@ public class MProfile {
 
 	public void setLastUpdateTs(Calendar lastUpdateTs) {
 		this.lastUpdateTs = lastUpdateTs;
+	}
+
+	public Integer getData_provider() {
+		return data_provider;
+	}
+
+	public void setData_provider(Integer data_provider) {
+		this.data_provider = data_provider;
+	}
+
+	public Integer getHit_perday() {
+		return hit_perday;
+	}
+
+	public void setHit_perday(Integer hit_perday) {
+		this.hit_perday = hit_perday;
 	}
 	
 }

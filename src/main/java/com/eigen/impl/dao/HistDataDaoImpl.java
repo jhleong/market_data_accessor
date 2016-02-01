@@ -46,15 +46,16 @@ public class HistDataDaoImpl implements HistDataDao {
 
 	@Override
 	@Transactional
-	public List<MHistData> getHistData_byProfileId_byDate(long nProfile_id, Date dtFrom, Date dtTo) {
+	public List<MHistData> getHistData_byProfileId_byType_byDate(long nProfile_id, String sType, Date dtFrom, Date dtTo) {
 		String hql = "from MHistData d"
 				+ " where"
 				+ " (d.profile_id = :profile_id)"
-				+ " and (date(d.dt) >= date(:frdate))"
-				+ " and (date(d.dt) <= date(:todate))"
-				+ " order by d.dt desc";
-		String[] names = {"profile_id", "frdate", "todate"};
-		Object[] values = {nProfile_id, dtFrom, dtTo};
+				+ " and (type = :type)"
+				+ " and (date(d.ts) >= date(:frdate))"
+				+ " and (date(d.ts) <= date(:todate))"
+				+ " order by d.ts desc";
+		String[] names = {"profile_id", "type", "frdate", "todate"};
+		Object[] values = {nProfile_id, sType, dtFrom, dtTo};
 		@SuppressWarnings("unchecked")
 		List<MHistData> ls = (List<MHistData>) hibernateTemplate.findByNamedParam(hql, names, values);
 		return ls;

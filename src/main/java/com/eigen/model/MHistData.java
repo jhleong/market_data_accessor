@@ -21,8 +21,11 @@ public class MHistData {
 	@Column(name="profile_id")
 	private long profile_id = -1;
     
-	@Column(name="dt")
-    private Calendar dt = Calendar.getInstance();
+	@Column(name="ts")
+    private Calendar ts = Calendar.getInstance();
+
+	@Column(name="type")
+    private String type = "";
  
 	@Column(name="open")
     private BigDecimal open = BigDecimal.ZERO;
@@ -43,7 +46,7 @@ public class MHistData {
     private BigDecimal nav = BigDecimal.ZERO;
     
 	@Column(name="volume")
-    private long volume = 0;
+    private BigDecimal volume = BigDecimal.ZERO;
 
 	public long getId() {
 		return id;
@@ -61,12 +64,20 @@ public class MHistData {
 		this.profile_id = profile_id;
 	}
 
-	public Calendar getDt() {
-		return dt;
+	public Calendar getTs() {
+		return ts;
 	}
 
-	public void setDt(Calendar dt) {
-		this.dt = dt;
+	public void setTs(Calendar ts) {
+		this.ts = ts;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public BigDecimal getOpen() {
@@ -117,11 +128,11 @@ public class MHistData {
 		this.nav = nav;
 	}
 
-	public long getVolume() {
+	public BigDecimal getVolume() {
 		return volume;
 	}
 
-	public void setVolume(long volume) {
+	public void setVolume(BigDecimal volume) {
 		this.volume = volume;
 	}
 	

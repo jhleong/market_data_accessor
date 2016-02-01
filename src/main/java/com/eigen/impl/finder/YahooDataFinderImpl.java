@@ -19,6 +19,8 @@ import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 
+import com.eigen.constant.DataProvider;
+import com.eigen.constant.HistDataType;
 import com.eigen.iface.finder.YahooDataFinder;
 import com.eigen.model.MHistData;
 import com.eigen.model.MProfile;
@@ -35,10 +37,11 @@ public class YahooDataFinderImpl implements YahooDataFinder {
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Override
-	public MProfile getProfile(String sRicName) {
+	public MProfile getProfile(String sSymbol) {
 		// TODO: get from Yahoo
 		MProfile mProfile = new MProfile();
-		mProfile.setRic_name(sRicName.toUpperCase());
+		mProfile.setData_provider(DataProvider.YAHOO.getId());
+		mProfile.setSymbol(sSymbol.toUpperCase());
 		return mProfile;
 	}
 
@@ -62,7 +65,7 @@ public class YahooDataFinderImpl implements YahooDataFinder {
     	to.setTime(dtTo);
     	
         Map<String, String> params = new LinkedHashMap<String, String>();
-        params.put("s", mProfile.getRic_name());
+        params.put("s", mProfile.getSymbol());
 
         params.put("a", String.valueOf(from.get(Calendar.MONTH)));
         params.put("b", String.valueOf(from.get(Calendar.DAY_OF_MONTH)));
@@ -87,6 +90,7 @@ public class YahooDataFinderImpl implements YahooDataFinder {
 	        for (String line = br.readLine(); line != null; line = br.readLine()) {
 	        	MHistData o = parseCsvLine(line);
 	        	o.setProfile_id(mProfile.getId());
+	        	o.setType(HistDataType.EQUITY.getCode());
 	        	ls.add(o);
 	        }
 	        br.close();
@@ -109,13 +113,13 @@ public class YahooDataFinderImpl implements YahooDataFinder {
 		} catch (ParseException e) {
 			logger.log(Level.SEVERE, e.getMessage());
 		}
-		o.setDt(c);
+		o.setTs(c);
 		//
 		o.setOpen(new BigDecimal((String) data[1]));
 		o.setHigh(new BigDecimal((String) data[2]));
 		o.setLow(new BigDecimal((String) data[3]));
 		o.setClose(new BigDecimal((String) data[4]));
-		o.setVolume(new Long((String) data[5]));
+		o.setVolume(new BigDecimal((String) data[5]));
 		o.setAdjClose(new BigDecimal((String) data[6]));
 		//
 		return o;

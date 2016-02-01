@@ -7,6 +7,6 @@ public interface ProfileManager {
 	public void doSave(MProfile o);
 	public void doUpdate(MProfile o);
 	
-	public void doDelete_byRicName(String sRicName);
+	public void doDelete_bySymbol(String sSymbol);
 
 }

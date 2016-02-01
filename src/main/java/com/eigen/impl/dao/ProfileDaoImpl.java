@@ -31,19 +31,19 @@ public class ProfileDaoImpl implements ProfileDao {
 
 	@Override
 	@Transactional
-	public void doDelete_byRicName(String sRicName) {
-		MProfile o = get_byRicName(sRicName);
+	public void doDelete_bySymbol(String sSymbol) {
+		MProfile o = get_bySymbol(sSymbol);
 		hibernateTemplate.delete(o);
 	}
 
 	@Override
 	@Transactional
-	public MProfile get_byRicName(String sRicName) {
+	public MProfile get_bySymbol(String sSymbol) {
 		String hql = "from MProfile p"
 				+ " where"
-				+ " (lower(p.ric_name) = lower(:ric_name))";
-		String[] names = {"ric_name"};
-		Object[] values = {sRicName};
+				+ " (lower(p.symbol) = lower(:symbol))";
+		String[] names = {"symbol"};
+		Object[] values = {sSymbol};
 		@SuppressWarnings("unchecked")
 		List<MProfile> ls = (List<MProfile>) hibernateTemplate.findByNamedParam(hql, names, values);
 		return (ls.size() == 1) ? ls.get(0) : null;

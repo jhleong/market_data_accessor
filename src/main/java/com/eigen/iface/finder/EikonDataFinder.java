@@ -6,7 +6,7 @@ import java.util.List;
 import com.eigen.model.MHistData;
 import com.eigen.model.MProfile;
 
-public interface YahooDataFinder {
+public interface EikonDataFinder {
 
 	public MProfile getProfile(String sSymbol);
 	public List<MHistData> getHistData(MProfile mProfile);

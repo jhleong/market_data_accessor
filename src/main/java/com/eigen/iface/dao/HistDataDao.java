@@ -12,6 +12,6 @@ public interface HistDataDao {
 	public void doDelete_byProfileId(long nProfile_id);
 
 	public List<MHistData> getHistData_all_byProfileId(long nProfile_id);
-	public List<MHistData> getHistData_byProfileId_byDate(long nProfile_id, Date dtFrom, Date dtTo);
+	public List<MHistData> getHistData_byProfileId_byType_byDate(long nProfile_id, String sType, Date dtFrom, Date dtTo);
 
 }

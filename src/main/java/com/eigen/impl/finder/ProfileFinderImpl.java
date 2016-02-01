@@ -3,6 +3,7 @@ package com.eigen.impl.finder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.eigen.constant.DataProvider;
 import com.eigen.iface.dao.ProfileDao;
+import com.eigen.iface.finder.EikonDataFinder;
 import com.eigen.iface.finder.ProfileFinder;
 import com.eigen.iface.finder.YahooDataFinder;
 import com.eigen.iface.manager.HistDataManager;
@@ -34,23 +37,26 @@ public class ProfileFinderImpl implements ProfileFinder {
 	private HistDataManager histDataManager;
     @Autowired
 	private YahooDataFinder yahooDataFinder;
+    @Autowired
+	private EikonDataFinder eikonDataFinder;
 	
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Override
 	@Cacheable("profile")
-	public MProfile get_byRicName(String sRicName) {
+	public MProfile get_bySymbol(DataProvider dataProvider, String sSymbol) {
 		
     	boolean bUpdateProfile = false;
     	boolean bUpdateHistData = false;
     	
-		MProfile mProfile = profileDao.get_byRicName(sRicName);
+		MProfile mProfile = profileDao.get_bySymbol(sSymbol);
 		if (mProfile == null) {
-			// TODO: Get profile from Yahoo or Eikon
-			mProfile = yahooDataFinder.getProfile(sRicName);
-			profileManager.doSave(mProfile);
+			mProfile = getProfile(dataProvider, sSymbol);
+			if (mProfile != null) {
+				profileManager.doSave(mProfile);
+			}
 			//
-			mProfile = profileDao.get_byRicName(sRicName);
+			mProfile = profileDao.get_bySymbol(sSymbol);
 			if (mProfile == null) return null;
 			//
 			bUpdateHistData = true;
@@ -72,17 +78,17 @@ public class ProfileFinderImpl implements ProfileFinder {
 		
     	if (bUpdateProfile) {
     		// TODO: Set new values
-			MProfile newProfile = yahooDataFinder.getProfile(sRicName);
+    		MProfile newProfile = getProfile(dataProvider, sSymbol);
 			mProfile.setBond_type(newProfile.getBond_type());
 			profileManager.doUpdate(mProfile);
 			//
-			mProfile = profileDao.get_byRicName(sRicName);
+			mProfile = profileDao.get_bySymbol(sSymbol);
 			if (mProfile == null) return null;
     	}
 		
     	if (bUpdateHistData) {
         	List<MHistData> ls = null;
-        	ls = yahooDataFinder.getHistData(mProfile);
+        	ls = getHistData(dataProvider, mProfile);
         	if (!ls.isEmpty()) {
         		histDataManager.doDelete_byProfileId(mProfile.getId());
         		histDataManager.doSave(ls);
@@ -90,6 +96,36 @@ public class ProfileFinderImpl implements ProfileFinder {
     	}
     	
 		return mProfile;
+	}
+
+	private MProfile getProfile(DataProvider dataProvider, String sSymbol) {
+		MProfile mProfile = null;
+		//
+		switch (dataProvider) {
+		case YAHOO:
+			mProfile = yahooDataFinder.getProfile(sSymbol);
+			break;
+		case EIKON_DESKTOP:
+			mProfile = eikonDataFinder.getProfile(sSymbol);
+			break;
+		}
+		//
+		return mProfile;
+	}
+
+	private List<MHistData> getHistData(DataProvider dataProvider, MProfile mProfile) {
+		List<MHistData> ls = new ArrayList<MHistData>();
+		//
+		switch (dataProvider) {
+		case YAHOO:
+			ls = yahooDataFinder.getHistData(mProfile);
+			break;
+		case EIKON_DESKTOP:
+			ls = eikonDataFinder.getHistData(mProfile);
+			break;
+		}
+		//
+		return ls;
 	}
 
 }

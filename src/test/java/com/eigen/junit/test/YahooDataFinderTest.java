@@ -29,7 +29,7 @@ public class YahooDataFinderTest {
 	@Test
 	public void test_get_hist_data() {
 		MProfile rtProfile = new MProfile();
-		rtProfile.setRic_name("GOOG");
+		rtProfile.setSymbol("GOOG");
 		List<MHistData> ls = null;
 		try {
 			ls = yahooDataFinder.getHistData(
