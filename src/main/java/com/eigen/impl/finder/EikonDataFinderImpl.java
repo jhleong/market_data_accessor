@@ -125,6 +125,7 @@ public class EikonDataFinderImpl implements EikonDataFinder {
 		List<MHistData> ls = new ArrayList<MHistData>();
 		for (EikonBarRecord b: ls_record) {
 			MHistData h = new MHistData();
+        	h.setProfile_id(mProfile.getId());
 			h.setType(HistDataType.EQUITY.getCode());
 			h.setClose(BigDecimal.valueOf(b.getCl()));
 			h.setOpen(BigDecimal.valueOf(b.getOp()));
@@ -173,6 +174,7 @@ public class EikonDataFinderImpl implements EikonDataFinder {
 		List<MHistData> ls = new ArrayList<MHistData>();
 		for (EikonNavRecord n: ls_record) {
 			MHistData h = new MHistData();
+        	h.setProfile_id(mProfile.getId());
 			h.setType(dataType.getCode());
 			h.setNav(BigDecimal.valueOf(n.getNav()));
 			//

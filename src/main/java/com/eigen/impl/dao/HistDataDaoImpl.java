@@ -1,10 +1,15 @@
 package com.eigen.impl.dao;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.stereotype.Repository;
@@ -15,6 +20,8 @@ import com.eigen.model.MHistData;
 @Repository
 public class HistDataDaoImpl implements HistDataDao {
 	
+	@Autowired
+	private SessionFactory sessionFactory;
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
 
@@ -47,17 +54,20 @@ public class HistDataDaoImpl implements HistDataDao {
 	@Override
 	@Transactional
 	public List<MHistData> getHistData_byProfileId_byType_byDate(long nProfile_id, String sType, Date dtFrom, Date dtTo) {
-		String hql = "from MHistData d"
-				+ " where"
-				+ " (d.profile_id = :profile_id)"
-				+ " and (type = :type)"
-				+ " and (date(d.ts) >= date(:frdate))"
-				+ " and (date(d.ts) <= date(:todate))"
-				+ " order by d.ts desc";
-		String[] names = {"profile_id", "type", "frdate", "todate"};
-		Object[] values = {nProfile_id, sType, dtFrom, dtTo};
+		//
+		Calendar cFrom = Calendar.getInstance();
+		cFrom.setTime(dtFrom);
+		Calendar cTo = Calendar.getInstance();
+		cTo.setTime(dtTo);
+		//
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MHistData.class)
+				.add(Restrictions.eq("profile_id", nProfile_id))
+				.add(Restrictions.ge("ts", cFrom))
+				.add(Restrictions.le("ts", cTo))
+				.addOrder(Order.desc("ts"));
+		//
 		@SuppressWarnings("unchecked")
-		List<MHistData> ls = (List<MHistData>) hibernateTemplate.findByNamedParam(hql, names, values);
+		List<MHistData> ls = (List<MHistData>) criteria.list();
 		return ls;
 	}
 

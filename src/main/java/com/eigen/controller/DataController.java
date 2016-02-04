@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eigen.constant.DataProvider;
@@ -34,24 +34,24 @@ public class DataController {
 	
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
-    @RequestMapping("/get_profile")
+    @RequestMapping("/get_profile/{dp}/{sb}")
 	@Cacheable("c_profile")
     public MProfile getProfile(
-    		@RequestParam(value="dp", defaultValue="1") int nDataProviderId,
-    		@RequestParam(value="sb", defaultValue="") String sSymbol) {
+    		@PathVariable("dp") int nDataProviderId,
+    		@PathVariable("sb") String sSymbol) {
     	//
     	DataProvider dataProvider = DataProvider.fromId(nDataProviderId);
     	MProfile p = profileFinder.get_bySymbol(dataProvider, sSymbol);
     	return p;
     }
 
-    @RequestMapping("/get_bar_data")
+    @RequestMapping("/get_bar_data/{dp}/{sb}/{fr}/{to}")
 	@Cacheable("c_bar_data")
     public List<MHistData> getBarData(
-    		@RequestParam(value="dp", defaultValue="1") int nDataProviderId,
-    		@RequestParam(value="sb", defaultValue="") String sSymbol,
-    		@RequestParam(value="fr", defaultValue="") String sFrDate,
-    		@RequestParam(value="to", defaultValue="") String sToDate) {
+    		@PathVariable("dp") int nDataProviderId,
+    		@PathVariable("sb") String sSymbol,
+    		@PathVariable("fr") String sFrDate,
+    		@PathVariable("to") String sToDate) {
     	//
     	Date dtFrDate;
     	Date dtToDate;
@@ -68,14 +68,14 @@ public class DataController {
 		return ls;
     }
 
-    @RequestMapping(value = "/get_bar_data_csv", produces = "text/csv")
+    @RequestMapping(value = "/get_bar_data_csv/{dp}/{sb}/{fr}/{to}", produces = "text/csv")
 	@Cacheable("c_bar_data_csv")
     public String getBarData_csv(
     		HttpServletResponse response,
-    		@RequestParam(value="dp", defaultValue="1") int nDataProviderId,
-    		@RequestParam(value="sb", defaultValue="") String sSymbol,
-    		@RequestParam(value="fr", defaultValue="") String sFrDate,
-    		@RequestParam(value="to", defaultValue="") String sToDate) {
+    		@PathVariable("dp") int nDataProviderId,
+    		@PathVariable("sb") String sSymbol,
+    		@PathVariable("fr") String sFrDate,
+    		@PathVariable("to") String sToDate) {
     	//
     	response.setContentType("data:text/csv; charset=utf-8"); 
         response.setHeader("Content-Disposition", "attachment; filename=" + sSymbol + ".csv");
@@ -97,14 +97,14 @@ public class DataController {
 		return sb.toString();
     }
 
-    @RequestMapping("/get_nav_data")
+    @RequestMapping("/get_nav_data/{dp}/{sb}/{tp}/{fr}/{to}")
 	@Cacheable("c_nav_data")
     public List<MHistData> getNavData(
-    		@RequestParam(value="dp", defaultValue="1") int nDataProviderId,
-    		@RequestParam(value="sb", defaultValue="") String sSymbol,
-    		@RequestParam(value="tp", defaultValue="") String sType,
-    		@RequestParam(value="fr", defaultValue="") String sFrDate,
-    		@RequestParam(value="to", defaultValue="") String sToDate) {
+    		@PathVariable("dp") int nDataProviderId,
+    		@PathVariable("sb") String sSymbol,
+    		@PathVariable("tp") String sType,
+    		@PathVariable("fr") String sFrDate,
+    		@PathVariable("to") String sToDate) {
     	//
     	Date dtFrDate;
     	Date dtToDate;
@@ -122,14 +122,14 @@ public class DataController {
 		return ls;
     }
 
-    @RequestMapping(value = "/get_nav_data_csv", produces = "text/csv")
+    @RequestMapping(value = "/get_nav_data_csv/{dp}/{sb}/{tp}/{fr}/{to}", produces = "text/csv")
 	@Cacheable("c_nav_data_csv")
     public String getNavData_csv(
-    		@RequestParam(value="dp", defaultValue="1") int nDataProviderId,
-    		@RequestParam(value="sb", defaultValue="") String sSymbol,
-    		@RequestParam(value="tp", defaultValue="") String sType,
-    		@RequestParam(value="fr", defaultValue="") String sFrDate,
-    		@RequestParam(value="to", defaultValue="") String sToDate) {
+    		@PathVariable("dp") int nDataProviderId,
+    		@PathVariable("sb") String sSymbol,
+    		@PathVariable("tp") String sType,
+    		@PathVariable("fr") String sFrDate,
+    		@PathVariable("to") String sToDate) {
     	//
 		List<MHistData> ls = getNavData(nDataProviderId, sSymbol, sType, sFrDate, sToDate);
 		StringBuilder sb = new StringBuilder();

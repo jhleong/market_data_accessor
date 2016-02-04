@@ -10,6 +10,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 @Entity
 @Table(name = "profile", uniqueConstraints = @UniqueConstraint(columnNames = "symbol"))
 public class MProfile {
@@ -37,7 +40,9 @@ public class MProfile {
 
 	@Column(name="exchange")
 	private String exchange = "";
-	
+    
+	@JsonSerialize(using = CalendarSerializer.class)
+    @JsonDeserialize(using = CalendarDeserializer.class)
 	@Column(name="expiry")
     private Calendar expiry = Calendar.getInstance();
 
@@ -52,7 +57,9 @@ public class MProfile {
 
 	@Column(name="market_sector")
 	private Integer market_sector = 0;
-	
+    
+	@JsonSerialize(using = CalendarSerializer.class)
+    @JsonDeserialize(using = CalendarDeserializer.class)
 	@Column(name="maturity")
     private Calendar maturity = Calendar.getInstance();
 

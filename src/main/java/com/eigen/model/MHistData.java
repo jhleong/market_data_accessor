@@ -9,6 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 @Entity
 @Table(name = "hist_data")
 public class MHistData {
@@ -21,6 +24,8 @@ public class MHistData {
 	@Column(name="profile_id")
 	private long profile_id = -1;
     
+	@JsonSerialize(using = CalendarSerializer.class)
+    @JsonDeserialize(using = CalendarDeserializer.class)
 	@Column(name="ts")
     private Calendar ts = Calendar.getInstance();
 
