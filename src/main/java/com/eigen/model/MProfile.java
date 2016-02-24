@@ -70,7 +70,7 @@ public class MProfile {
 	private String notes = "";
     
 	@Column(name="last_update_ts")
-    private Calendar lastUpdateTs = Calendar.getInstance();
+    private Calendar lastUpdateTs = null;
 	
 	@Column(name="data_provider")
 	private Integer data_provider = 0;

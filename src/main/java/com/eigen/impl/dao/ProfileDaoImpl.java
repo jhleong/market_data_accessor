@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.HibernateTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.eigen.constant.DataProvider;
 import com.eigen.iface.dao.ProfileDao;
 import com.eigen.model.MProfile;
 
@@ -31,19 +32,22 @@ public class ProfileDaoImpl implements ProfileDao {
 
 	@Override
 	@Transactional
-	public void doDelete_bySymbol(String sSymbol) {
-		MProfile o = get_bySymbol(sSymbol);
+	public void doDelete_bySymbol(DataProvider dataProvider, String sSymbol) {
+		MProfile o = get_bySymbol(dataProvider, sSymbol);
 		hibernateTemplate.delete(o);
 	}
 
 	@Override
 	@Transactional
-	public MProfile get_bySymbol(String sSymbol) {
+	public MProfile get_bySymbol(DataProvider dataProvider, String sSymbol) {
+		int data_provider_enum = dataProvider.getId();
 		String hql = "from MProfile p"
 				+ " where"
-				+ " (lower(p.symbol) = lower(:symbol))";
-		String[] names = {"symbol"};
-		Object[] values = {sSymbol};
+				+ " (lower(p.symbol) = lower(:symbol)) and "
+				+ " p.data_provider =  (:data_provider)";
+		
+		String[] names = {"symbol", "data_provider"};
+		Object[] values = {sSymbol, data_provider_enum};
 		@SuppressWarnings("unchecked")
 		List<MProfile> ls = (List<MProfile>) hibernateTemplate.findByNamedParam(hql, names, values);
 		return (ls.size() == 1) ? ls.get(0) : null;

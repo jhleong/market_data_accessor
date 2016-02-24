@@ -88,24 +88,28 @@ public class EikonDataFinderImpl implements EikonDataFinder {
 	}
 
 	@Override
-	public List<MHistData> getHistData(MProfile mProfile) {
+	public List<MHistData> getHistData(MProfile mProfile, HistDataType type) {
 		//
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.YEAR, -20);	// Data from 20 years ago
 		Date dtLiveFrom = c.getTime();
 		Date dtLiveTo = new Date();
 		//
-    	return getHistData(mProfile, dtLiveFrom, dtLiveTo);
+    	return getHistData(mProfile, type, dtLiveFrom, dtLiveTo);
 	}
 
 	@Override
-	public List<MHistData> getHistData(MProfile mProfile, Date dtFrom, Date dtTo) {
-		List<MHistData> ls_bar = getBarData(mProfile, dtFrom, dtTo);
-		List<MHistData> ls_nav = getNavData(mProfile, dtFrom, dtTo);
+	public List<MHistData> getHistData(MProfile mProfile, HistDataType type, Date dtFrom, Date dtTo) {
+		List<MHistData> ls_histData = null;
+		
+		if(type == HistDataType.EQUITY)
+			ls_histData = getBarData(mProfile, dtFrom, dtTo);
+		else if(type == HistDataType.BOND || type == HistDataType.FUND)
+			ls_histData = getNavData(mProfile, dtFrom, dtTo);
 		//
 		List<MHistData> ls = new ArrayList<MHistData>();
-		ls.addAll(ls_bar);
-		ls.addAll(ls_nav);
+		if(ls_histData != null )
+			ls.addAll(ls_histData);
 		//
 		return ls;
 	}

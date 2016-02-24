@@ -43,25 +43,28 @@ public class ProfileFinderImpl implements ProfileFinder {
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Override
-	@Cacheable("profile")
+	//@Cacheable("profile")
 	public MProfile get_bySymbol(DataProvider dataProvider, String sSymbol) {
 		
     	boolean bUpdateProfile = false;
     	boolean bUpdateHistData = false;
     	
-		MProfile mProfile = profileDao.get_bySymbol(sSymbol);
+		MProfile mProfile = profileDao.get_bySymbol(dataProvider, sSymbol);
 		if (mProfile == null) {
 			mProfile = getProfile(dataProvider, sSymbol);
 			if (mProfile != null) {
 				profileManager.doSave(mProfile);
 			}
 			//
-			mProfile = profileDao.get_bySymbol(sSymbol);
+			mProfile = profileDao.get_bySymbol(dataProvider, sSymbol);
 			if (mProfile == null) return null;
 			//
+			/* <<< jhleong
 			bUpdateHistData = true;
+			>>> */
 		}
 		
+		/* <<< jhleong 
 		Calendar cToday = Calendar.getInstance();
 		try {
 			cToday.setTime(dateFormat.parse(dateFormat.format(new Date())));
@@ -94,6 +97,7 @@ public class ProfileFinderImpl implements ProfileFinder {
         		histDataManager.doSave(ls);
         	}
     	}
+    	>>> jhleong */
     	
 		return mProfile;
 	}
@@ -113,6 +117,7 @@ public class ProfileFinderImpl implements ProfileFinder {
 		return mProfile;
 	}
 
+	/* <<< jhleong 
 	private List<MHistData> getHistData(DataProvider dataProvider, MProfile mProfile) {
 		List<MHistData> ls = new ArrayList<MHistData>();
 		//
@@ -127,5 +132,5 @@ public class ProfileFinderImpl implements ProfileFinder {
 		//
 		return ls;
 	}
-
+ >>> jhleong */
 }

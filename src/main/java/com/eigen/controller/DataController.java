@@ -3,9 +3,12 @@ package com.eigen.controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.text.ParseException;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +22,10 @@ import com.eigen.constant.DataProvider;
 import com.eigen.constant.HistDataType;
 import com.eigen.iface.finder.HistDataFinder;
 import com.eigen.iface.finder.ProfileFinder;
+import com.eigen.iface.finder.EikonDataFinder;
+import com.eigen.iface.finder.YahooDataFinder;
+import com.eigen.iface.manager.HistDataManager;
+import com.eigen.iface.manager.ProfileManager;
 import com.eigen.model.MHistData;
 import com.eigen.model.MProfile;
 
@@ -31,11 +38,21 @@ public class DataController {
 	private HistDataFinder histDataFinder;
     @Autowired
 	private ProfileFinder profileFinder;
+    /* <<< jhleong */
+    @Autowired
+	private YahooDataFinder yahooDataFinder;
+    @Autowired
+	private EikonDataFinder eikonDataFinder;
+	@Autowired
+	private HistDataManager histDataManager;
+	@Autowired
+	private ProfileManager profileManager;
+	/* <<< jhleong */
 	
 	private DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
     @RequestMapping("/get_profile/{dp}/{sb}")
-	@Cacheable("c_profile")
+	//@Cacheable("c_profile")
     public MProfile getProfile(
     		@PathVariable("dp") int nDataProviderId,
     		@PathVariable("sb") String sSymbol) {
@@ -46,7 +63,7 @@ public class DataController {
     }
 
     @RequestMapping("/get_bar_data/{dp}/{sb}/{fr}/{to}")
-	@Cacheable("c_bar_data")
+	//@Cacheable("c_bar_data")
     public List<MHistData> getBarData(
     		@PathVariable("dp") int nDataProviderId,
     		@PathVariable("sb") String sSymbol,
@@ -64,6 +81,39 @@ public class DataController {
 		}
 		
 		MProfile p = getProfile(nDataProviderId, sSymbol);
+		
+		/* if the symbol is not found at the dataprovider */
+		if(p == null)
+			return null;
+		
+		/* <<< jhleong */
+		Calendar cToday = Calendar.getInstance();
+		try {
+			cToday.setTime(dateFormat.parse(dateFormat.format(new Date())));
+
+		} catch (ParseException e) {
+			logger.log(Level.SEVERE, e.getMessage());
+			throw new RuntimeException(e);
+		}
+		
+		if (p.getLastUpdateTs() == null || p.getLastUpdateTs().before(cToday)) {
+		
+			// Get live data when not updated for more than one day
+			// TODO: Check online availability first
+			List<MHistData> ls = null;
+        	ls = getHistData(nDataProviderId, p, HistDataType.EQUITY, dtFrDate, dtToDate);  //assumption of only EQUITY use BAR structure
+        	if (!ls.isEmpty()) {
+        		histDataManager.doDelete_byProfileId(p.getId());
+        		histDataManager.doSave(ls);
+        		
+        		//update the timeseries last_update_ts
+        		p.setLastUpdateTs(Calendar.getInstance());
+        		profileManager.doUpdate(p);
+        	}
+			
+		}
+		/* >>> jhleong */
+		
 		List<MHistData> ls = histDataFinder.get_byProfile_byType_byDate(p, HistDataType.EQUITY, dtFrDate, dtToDate);
 		return ls;
     }
@@ -148,4 +198,22 @@ public class DataController {
 		return sb.toString();
     }
     
+    /* >>> jhleong */
+    private List<MHistData> getHistData(int  nDataProviderId, MProfile mProfile, HistDataType type, Date dtFrom, Date dtTo) {
+    	DataProvider dataProvider = DataProvider.fromId(nDataProviderId);
+    	
+		List<MHistData> ls = new ArrayList<MHistData>();
+		//
+		switch (dataProvider) {
+		case YAHOO:
+			ls = yahooDataFinder.getHistData(mProfile);   // TODO
+			break;
+		case EIKON_DESKTOP:
+			ls = eikonDataFinder.getHistData(mProfile, type); //retrieve from 20 year ago till today.
+			break;
+		}
+		//
+		return ls;
+	}
+    /* <<< jhleong */
 }

@@ -29,8 +29,10 @@ public class DataConfig {
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
 		dataSource.setUrl("jdbc:postgresql://localhost:5432/qidb");
-		dataSource.setUsername("qiuser");
-		dataSource.setPassword("qiEigenQI+71");
+		dataSource.setUsername("postgres");
+		dataSource.setPassword("postgres");
+		//dataSource.setUsername("qiuser");
+		//dataSource.setPassword("qiEigenQI+71");
 
 		return dataSource;
 	}
