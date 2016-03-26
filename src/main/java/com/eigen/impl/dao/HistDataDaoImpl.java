@@ -64,7 +64,7 @@ public class HistDataDaoImpl implements HistDataDao {
 				.add(Restrictions.eq("profile_id", nProfile_id))
 				.add(Restrictions.ge("ts", cFrom))
 				.add(Restrictions.le("ts", cTo))
-				.addOrder(Order.desc("ts"));
+				.addOrder(Order.asc("ts"));
 		//
 		@SuppressWarnings("unchecked")
 		List<MHistData> ls = (List<MHistData>) criteria.list();

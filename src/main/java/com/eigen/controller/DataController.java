@@ -70,56 +70,14 @@ public class DataController {
     		@PathVariable("fr") String sFrDate,
     		@PathVariable("to") String sToDate) {
     	//
-    	Date dtFrDate;
-    	Date dtToDate;
-		try {
-			dtFrDate = dateFormat.parse(sFrDate);
-			dtToDate = dateFormat.parse(sToDate);
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, e.getMessage());
-			throw new RuntimeException(e);
-		}
+    	
 		
-		MProfile p = getProfile(nDataProviderId, sSymbol);
-		
-		/* if the symbol is not found at the dataprovider */
-		if(p == null)
-			return null;
-		
-		/* <<< jhleong */
-		Calendar cToday = Calendar.getInstance();
-		try {
-			cToday.setTime(dateFormat.parse(dateFormat.format(new Date())));
-
-		} catch (ParseException e) {
-			logger.log(Level.SEVERE, e.getMessage());
-			throw new RuntimeException(e);
-		}
-		
-		if (p.getLastUpdateTs() == null || p.getLastUpdateTs().before(cToday)) {
-		
-			// Get live data when not updated for more than one day
-			// TODO: Check online availability first
-			List<MHistData> ls = null;
-        	ls = getHistData(nDataProviderId, p, HistDataType.EQUITY, dtFrDate, dtToDate);  //assumption of only EQUITY use BAR structure
-        	if (!ls.isEmpty()) {
-        		histDataManager.doDelete_byProfileId(p.getId());
-        		histDataManager.doSave(ls);
-        		
-        		//update the timeseries last_update_ts
-        		p.setLastUpdateTs(Calendar.getInstance());
-        		profileManager.doUpdate(p);
-        	}
-			
-		}
-		/* >>> jhleong */
-		
-		List<MHistData> ls = histDataFinder.get_byProfile_byType_byDate(p, HistDataType.EQUITY, dtFrDate, dtToDate);
+		List<MHistData> ls = getTimeSeriesForRest(nDataProviderId, sSymbol, sFrDate, sToDate, HistDataType.EQUITY);
 		return ls;
     }
 
     @RequestMapping(value = "/get_bar_data_csv/{dp}/{sb}/{fr}/{to}", produces = "text/csv")
-	@Cacheable("c_bar_data_csv")
+	//@Cacheable("c_bar_data_csv")
     public String getBarData_csv(
     		HttpServletResponse response,
     		@PathVariable("dp") int nDataProviderId,
@@ -155,20 +113,9 @@ public class DataController {
     		@PathVariable("tp") String sType,
     		@PathVariable("fr") String sFrDate,
     		@PathVariable("to") String sToDate) {
-    	//
-    	Date dtFrDate;
-    	Date dtToDate;
-		try {
-			dtFrDate = dateFormat.parse(sFrDate);
-			dtToDate = dateFormat.parse(sToDate);
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, e.getMessage());
-			throw new RuntimeException(e);
-		}
-		
-		MProfile p = getProfile(nDataProviderId, sSymbol);
+    	
 		HistDataType t = HistDataType.fromCode(sType);
-		List<MHistData> ls = histDataFinder.get_byProfile_byType_byDate(p, t, dtFrDate, dtToDate);
+		List<MHistData> ls = getTimeSeriesForRest(nDataProviderId, sSymbol, sFrDate, sToDate, t);
 		return ls;
     }
 
@@ -215,5 +162,55 @@ public class DataController {
 		//
 		return ls;
 	}
+    
+    private List<MHistData> getTimeSeriesForRest(int nDataProviderId, String sSymbol, String sFrDate, String sToDate, HistDataType type){
+    	//
+    	Date dtFrDate;
+    	Date dtToDate;
+		try {
+			dtFrDate = dateFormat.parse(sFrDate);
+			dtToDate = dateFormat.parse(sToDate);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, e.getMessage());
+			throw new RuntimeException(e);
+		}
+		
+		MProfile p = getProfile(nDataProviderId, sSymbol);
+		
+		/* if the symbol is not found at the dataprovider */
+		if(p == null)
+			return null;
+		
+		Calendar cToday = Calendar.getInstance();
+		Calendar cToDate = Calendar.getInstance();
+		try {
+			cToday.setTime(dateFormat.parse(dateFormat.format(new Date())));
+			cToDate.setTime(dtToDate);
+
+		} catch (ParseException e) {
+			logger.log(Level.SEVERE, e.getMessage());
+			throw new RuntimeException(e);
+		}
+		
+		if (p.getLastUpdateTs() == null || p.getLastUpdateTs().before(dtToDate)) {
+		
+			// Get live data when last_update_ts is earlier then the ToDate
+			// TODO: Check online availability first
+			List<MHistData> ls = null;
+        	ls = getHistData(nDataProviderId, p, type, dtFrDate, dtToDate);  //assumption of only EQUITY use BAR structure
+        	if (!ls.isEmpty()) {
+        		histDataManager.doDelete_byProfileId(p.getId());
+        		histDataManager.doSave(ls);
+        		
+        		//update the hist_data.last_update_ts to the last day from the list
+        		p.setLastUpdateTs(ls.get(ls.size()).getTs());
+        		profileManager.doUpdate(p);
+        	}
+			
+		}
+
+		List<MHistData> ls = histDataFinder.get_byProfile_byType_byDate(p, type, dtFrDate, dtToDate);
+		return ls;
+    }
     /* <<< jhleong */
 }

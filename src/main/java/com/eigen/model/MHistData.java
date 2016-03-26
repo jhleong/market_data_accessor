@@ -33,25 +33,25 @@ public class MHistData {
     private String type = "";
  
 	@Column(name="open")
-    private BigDecimal open = BigDecimal.ZERO;
+    private BigDecimal open = null;
 	
 	@Column(name="low")
-    private BigDecimal low = BigDecimal.ZERO;
+    private BigDecimal low = null;
 	
 	@Column(name="high")
-    private BigDecimal high = BigDecimal.ZERO;
+    private BigDecimal high = null;
 	
 	@Column(name="close")
-    private BigDecimal close = BigDecimal.ZERO;
+    private BigDecimal close = null;
     
 	@Column(name="adj_close")
-    private BigDecimal adjClose = BigDecimal.ZERO;
+    private BigDecimal adjClose = null;
     
 	@Column(name="nav")
-    private BigDecimal nav = BigDecimal.ZERO;
+    private BigDecimal nav = null;
     
 	@Column(name="volume")
-    private BigDecimal volume = BigDecimal.ZERO;
+    private BigDecimal volume = null;
 
 	public long getId() {
 		return id;

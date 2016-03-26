@@ -29,10 +29,11 @@ import com.eigen.model.MProfile;
 @Service
 public class EikonDataFinderImpl implements EikonDataFinder {
 
+	private static final String RT_REST_API_KEY="1234";
     private static final String BASE_URL = "http://win.eigencat.co:8877/eikon/";
-    private static final String URL_GET_PROFILE = BASE_URL + "rt_meta_data/{par_ricname}";
-    private static final String URL_GET_BAR_DATA = BASE_URL + "rt_bar_data/{par_ricname}/{par_interval}/{par_from_date}/{par_to_date}";
-    private static final String URL_GET_NAV_DATA = BASE_URL + "rt_nav_data/{par_ricname}/{par_type}/{par_interval}/{par_from_date}/{par_to_date}";
+    private static final String URL_GET_PROFILE = BASE_URL + "rt_meta_data/" + RT_REST_API_KEY + "/{par_ricname}";
+    private static final String URL_GET_BAR_DATA = BASE_URL + "rt_bar_data/" + RT_REST_API_KEY + "/{par_ricname}/{par_interval}/{par_from_date}/{par_to_date}";
+    private static final String URL_GET_NAV_DATA = BASE_URL + "rt_nav_data/" + RT_REST_API_KEY + "/{par_ricname}/{par_type}/{par_interval}/{par_from_date}/{par_to_date}";
 	
     private static final Logger logger = Logger.getLogger(EikonDataFinderImpl.class.getName());
 	
@@ -105,13 +106,9 @@ public class EikonDataFinderImpl implements EikonDataFinder {
 		if(type == HistDataType.EQUITY)
 			ls_histData = getBarData(mProfile, dtFrom, dtTo);
 		else if(type == HistDataType.BOND || type == HistDataType.FUND)
-			ls_histData = getNavData(mProfile, dtFrom, dtTo);
-		//
-		List<MHistData> ls = new ArrayList<MHistData>();
-		if(ls_histData != null )
-			ls.addAll(ls_histData);
-		//
-		return ls;
+			ls_histData = getNavData(mProfile, type, dtFrom, dtTo);
+
+		return ls_histData;
 	}
 
 	private List<MHistData> getBarData(MProfile mProfile, Date dtFrom, Date dtTo) {
@@ -151,16 +148,6 @@ public class EikonDataFinderImpl implements EikonDataFinder {
         return ls;
 	}
 
-	private List<MHistData> getNavData(MProfile mProfile, Date dtFrom, Date dtTo) {
-		List<MHistData> ls_bond = getNavData(mProfile, HistDataType.BOND, dtFrom, dtTo);
-		List<MHistData> ls_fund = getNavData(mProfile, HistDataType.FUND, dtFrom, dtTo);
-		//
-		List<MHistData> ls = new ArrayList<MHistData>();
-		ls.addAll(ls_bond);
-		ls.addAll(ls_fund);
-		//
-		return ls;
-	}
 
 	private List<MHistData> getNavData(MProfile mProfile, HistDataType dataType, Date dtFrom, Date dtTo) {
 		
