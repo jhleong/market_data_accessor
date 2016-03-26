@@ -192,7 +192,7 @@ public class DataController {
 			throw new RuntimeException(e);
 		}
 		
-		if (p.getLastUpdateTs() == null || p.getLastUpdateTs().before(dtToDate)) {
+		if (p.getLastUpdateTs() == null || p.getLastUpdateTs().before(cToDate)) {
 		
 			// Get live data when last_update_ts is earlier then the ToDate
 			// TODO: Check online availability first
@@ -203,7 +203,7 @@ public class DataController {
         		histDataManager.doSave(ls);
         		
         		//update the hist_data.last_update_ts to the last day from the list
-        		p.setLastUpdateTs(ls.get(ls.size()).getTs());
+        		p.setLastUpdateTs(ls.get(0).getTs());
         		profileManager.doUpdate(p);
         	}
 			
